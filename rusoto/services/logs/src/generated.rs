@@ -3283,6 +3283,7 @@ pub trait CloudWatchLogs {
     fn put_log_events(
         &self,
         input: PutLogEventsRequest,
+        format: &str
     ) -> RusotoFuture<PutLogEventsResponse, PutLogEventsError>;
 
     /// <p>Creates or updates a metric filter and associates it with the specified log group. Metric filters allow you to configure rules to extract metric data from log events ingested through <a>PutLogEvents</a>.</p> <p>The maximum number of metric filters that can be associated with a log group is 100.</p>
@@ -4170,11 +4171,14 @@ impl CloudWatchLogs for CloudWatchLogsClient {
     fn put_log_events(
         &self,
         input: PutLogEventsRequest,
+        format: &str
     ) -> RusotoFuture<PutLogEventsResponse, PutLogEventsError> {
         let mut request = SignedRequest::new("POST", "logs", &self.region, "/");
 
         request.set_content_type("application/x-amz-json-1.1".to_owned());
         request.add_header("x-amz-target", "Logs_20140328.PutLogEvents");
+        request.add_header("x-amzn-logs-format", format);
+
         let encoded = serde_json::to_string(&input).unwrap();
         request.set_payload(Some(encoded));
 
